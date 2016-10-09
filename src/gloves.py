@@ -59,17 +59,36 @@ class Gloves:
         log.info("Start squeezing!")
         for action in self.config.order:
             if action is 'g':
-                pass
+                code = self._timer(
+                    self.config.squeezing_duration,
+                    os.system,
+                    self.config.alert_command + "Stop working!"
+                )
+                if code is 0:
+                    # logging
+                    os.system(self.config.relax_command)
+                else:
+                    # exceptions handling
+                    pass                
             if action is 's':
-                pass
+                code = self._timer(
+                    self.config.short_break_duration,
+                    os.system,
+                    self.config.alert_command + "Start working!"   
+                )
             if action is 'l':
-                pass
+                code = self._time(
+                    self.config.long_break_duration,
+                    os.system,
+                    self.config.alert_command + "Start working!"
+                )
             
     def _timer(self, delay, func, *args, **kwargs):
         start = time.time()        
         while(time.time() - start < delay):
             left = delay - time.time() + start
             m, s = divmod(round(left), 60)
+            print(" " * 80, end="\r")
             print("Time Remaining: {0} m {1} s ({2:.3f})".format(m, s, left), end="\r")
             sys.stdout.flush()
             time.sleep(0.1)
@@ -119,4 +138,4 @@ if __name__ == "__main__":
     else:
         gloves.squeeze()
 
-    gloves._timer(5, print, "end!") 
+#    gloves._timer(5, print, "end!") 
