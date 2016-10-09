@@ -56,11 +56,24 @@ class Gloves:
             log.info("Configuration file was loaded successfully!")
            
     def squeeze(self):
-        if "order" in dir(self.config):
-            print('start')
+        log.info("Start squeezing!")
+        for action in self.config.order:
+            if action is 'g':
+                pass
+            if action is 's':
+                pass
+            if action is 'l':
+                pass
             
-    def _timer(delay, func, *args, **kwargs):
-        time.sleep(delay)
+    def _timer(self, delay, func, *args, **kwargs):
+        start = time.time()        
+        while(time.time() - start < delay):
+            left = delay - time.time() + start
+            m, s = divmod(round(left), 60)
+            print("Time Remaining: {0} m {1} s ({2:.3f})".format(m, s, left), end="\r")
+            sys.stdout.flush()
+            time.sleep(0.1)
+        sys.stdout.write('Time Remaining 0 m 0 s (0.000)\n')
         return func(*args, **kwargs)
     
 
@@ -105,4 +118,5 @@ if __name__ == "__main__":
             gloves.squeeze()
     else:
         gloves.squeeze()
-            
+
+    gloves._timer(5, print, "end!") 
