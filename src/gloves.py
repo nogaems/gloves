@@ -27,6 +27,7 @@ class Gloves:
                 "Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH)
             )
 
-gloves = Gloves()
+if __name__ == "__main__":
+    gloves = Gloves()
 
 

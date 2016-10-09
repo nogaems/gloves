@@ -9,7 +9,7 @@ long_break_duration = 1200
 # separated by " "
 cycle = "p s p s p s p l"
 # alert command
-alert = "xmessage -center BREAK"
+alert_command = "xmessage -center BREAK"
 # disgress command
-disgress = "xscreensaver-command --lock"
+disgress_command = "xscreensaver-command --lock"
 
