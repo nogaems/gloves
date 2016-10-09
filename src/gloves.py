@@ -56,12 +56,18 @@ class Gloves:
             iter_test = iter(self.config.sequence)
         except TypeError as te:
             raise ImportError(te)
-        else:
-            log.info("Configuration file was loaded successfully!")
+        if isinstance(self.config.sequence, str):
+            self.config.sequence = self.config.sequence.split(' ')
+        for action in self.config.sequence:
+            if action not in ['g', 's', 'l']:
+                log.error("Incorrect action \'{}\'".format(action))
+                exit(1)
+        
+        log.info("Configuration file was loaded successfully!")
            
     def squeeze(self):
         log.info("Start squeezing!")
-        for action in self.config.sequence.split(' '):
+        for action in self.config.sequence:
             if action is 'g':
                 code = self._timer(
                     self.config.squeezing_duration,
