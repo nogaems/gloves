@@ -86,14 +86,33 @@ class Gloves:
     def _timer(self, delay, func, *args, **kwargs):
         start = time.time()        
         while(time.time() - start < delay):
-            left = delay - time.time() + start
-            m, s = divmod(round(left), 60)
-            print(" " * 80, end="\r")
-            print("Time Remaining: {0} m {1} s ({2:.3f})".format(m, s, left), end="\r")
-            sys.stdout.flush()
-            time.sleep(0.1)
-        sys.stdout.write('Time Remaining 0 m 0 s (0.000)\n')
-        return func(*args, **kwargs)
+            code = 0
+            try:
+                left = delay - time.time() + start
+                m, s = divmod(round(left), 60)
+                print(" " * 80, end="\r")
+                print("      Time Remaining: {0} m {1} s ({2:.3f})".format(m, s, left), end="\r")
+                sys.stdout.flush()
+                time.sleep(0.1)
+            except (KeyboardInterrupt, EOFError) as err:
+                def get_answer():
+                    try:
+                        return input("\n    Are you sure? (y/N): ")
+                    except (KeyboardInterrupt, EOFError) as err:
+                        return get_answer()                            
+                waiting_start = time.time()                
+                answer = get_answer()                    
+                if answer is not "" and answer.upper() in ['Y', 'YES']:
+                    code = 1
+                    break
+                else:
+                    delay = delay + time.time() - waiting_start
+        if code is 0:
+            sys.stdout.write('      Time Remaining 0 m 0 s (0.000)\n')
+            return func(*args, **kwargs)
+        else:
+            log.info("Aborting.")
+            exit(1)
     
 
 if __name__ == "__main__":
