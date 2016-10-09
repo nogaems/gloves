@@ -19,17 +19,23 @@ class Gloves:
             import imp
             self.config = imp.load_source("config", self.CONFIG_PATH)
         else:
-            raise FileExistsError(
-                "Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH)
-            )
-        
+            # In the case of portable use.
+            print("Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH))
+            print("Trying of loading the \'example./config.py\' file")
+            if os.path.exists("./example.config.py"):
+                self.config = imp.load_source("config", "./config.py")
+            else:
+                raise FileExistsError(
+                    "Configuration file does not exists!"
+                )
+                
     def _timer(delay, func, *args, **kwargs):
         time.sleep(delay)
         return func(*args, **kwargs)
     
 
 if __name__ == "__main__":
-    gloves = Gloves()
+    gloves = Gloves()    
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
