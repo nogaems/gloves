@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 
-import time, os
+import time
+import os
+import argparse
 
 
 class Gloves:
@@ -15,7 +17,7 @@ class Gloves:
         self.CONFIG_PATH = os.path.join(os.path.expanduser(root), relpath)
         if os.path.exists(self.CONFIG_PATH):
             import imp
-            self.config = imp.load_source('config', self.CONFIG_PATH)
+            self.config = imp.load_source("config", self.CONFIG_PATH)
         else:
             raise FileExistsError(
                 "Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH)
@@ -29,4 +31,21 @@ class Gloves:
 if __name__ == "__main__":
     gloves = Gloves()
 
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-l",
+        "--loop",
+        help="Repeat all",
+        action="store_true"
+    )
+    parser.add_argument(
+        "--no-log",
+        help="Disable logging",
+        action="store_true"
+    )
+    parser.add_argument(
+        "-f",
+        "--config-file",
+        help="Load a custom configuration file"
+    )
+    parser.parse_args()
