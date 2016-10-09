@@ -2,12 +2,6 @@
 
 import time, os
 
-def timer(delay, func, *args, **kwargs):
-    time.sleep(delay)
-    return func(*args, **kwargs)
-
-#timer(2, os.system, "xmessage -center mess")
-
 
 class Gloves:
     def __init__(self):
@@ -26,6 +20,11 @@ class Gloves:
             raise FileExistsError(
                 "Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH)
             )
+        
+    def _timer(delay, func, *args, **kwargs):
+        time.sleep(delay)
+        return func(*args, **kwargs)
+    
 
 if __name__ == "__main__":
     gloves = Gloves()
