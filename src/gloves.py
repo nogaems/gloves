@@ -9,17 +9,24 @@ def timer(delay, func, *args, **kwargs):
 #timer(2, os.system, "xmessage -center mess")
 
 
-class Config:
+class Gloves:
     def __init__(self):
-        self.CONFIG_PATH = os.path.join(os.path.expanduser("~"),".config/gloves/config.py")
+        try:
+            self.load_config()
+        except Exception as e:
+            print(e.with_traceback)
+            exit(1)
+        
+    def load_config(self, root="~", relpath=".config/gloves/config.py"):
+        self.CONFIG_PATH = os.path.join(os.path.expanduser(root), relpath)
         if os.path.exists(self.CONFIG_PATH):
-            print(123)
+            import imp
+            self.config = imp.load_source('config', self.CONFIG_PATH)
         else:
             raise FileExistsError(
                 "Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH)
             )
 
-c = Config()
-
+gloves = Gloves()
 
 
