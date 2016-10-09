@@ -12,4 +12,3 @@ order = "p s p s p s p l"
 alert_command = "xmessage -center BREAK"
 # relax command
 relax_command = "xscreensaver-command --lock"
-

@@ -2,36 +2,39 @@
 
 import time
 import os
+import sys
 import argparse
 import logging as log
 
 class Gloves:
-    def __init__(self, v=False):
-        self.v = v
+    def __init__(self):
         try:
             self.load_config()
         except Exception as e:
-            print(e)
+            log.error(e.args[0])
             exit(1)
         
     def load_config(self, root="~", relpath=".config/gloves/config.py"):
         self.CONFIG_PATH = os.path.join(os.path.expanduser(root), relpath)
         import imp
         if os.path.exists(self.CONFIG_PATH):
-            if self.v:
-                print()
+            log.info("Trying to load the \'{}\' file...".format(self.CONFIG_PATH))
             self.config = imp.load_source("config", self.CONFIG_PATH)
         else:
             # In the case of portable use.
-            print("Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH))
-            print("Trying of loading the \'example.config.py\' file")
-            portable_config_path = "./example.config.py"
-            if os.path.exists(portable_config_path):
-                self.config = imp.load_source("config", portable_config_path)                
+            log.info("Configuration file \'{}\' does not exists!".format(self.CONFIG_PATH))
+            self.CONFIG_PATH = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),                
+                "example.config.py"
+            )
+            log.info("Trying to load the \'{}\' file...".format(self.CONFIG_PATH))
+            if os.path.exists(self.CONFIG_PATH):
+                self.config = imp.load_source("config", self.CONFIG_PATH)            
             else:
                 raise FileExistsError(
                     "Configuration file does not exists!"
                 )
+
         sections = [
             "squeezing_duration",
             "short_break_duration",
@@ -40,6 +43,7 @@ class Gloves:
             "alert_command",            
             "relax_command"
         ]
+        log.info("Check the configuration is correct...")
         for section in sections:
             missed = []
             if section not in dir(self.config):
@@ -47,7 +51,9 @@ class Gloves:
         if len(missed) is not 0:
             raise ImportError(
                 "Some sections in the configuration file was missed out: {}".format(missed)
-            )         
+            )
+        else:
+            log.info("Configuration file was loaded successfully!")
            
     def squeeze(self):
         if "order" in dir(self.config):
@@ -59,8 +65,7 @@ class Gloves:
     
 
 if __name__ == "__main__":
-    gloves = Gloves()    
-
+    
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-l",
@@ -82,10 +87,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "-v",
         "--verbose",
-        help="Increase output verbosity"
+        help="Increase output verbosity",
+        action="store_true"
     )
-
     args = parser.parse_args()
+    
+    if args.verbose:
+        log.basicConfig(format="%(levelname)s: %(message)s", level=log.DEBUG)
+        log.info("Verbose output.")
+    else:
+        log.basicConfig(format="%(levelname)s: %(message)s")
+
+    gloves = Gloves()
 
     if args.loop:
         while True:
