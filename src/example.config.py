@@ -2,12 +2,12 @@
 squeezing_duration = 15
 short_break_duration = 5
 long_break_duration = 10
-#order
+# sequence of actions
 # g - gloves
 # s - short break
 # l - long break
 # separated by " "
-order = "g s g s g s g l"
+sequence = "g s g s g s g l"
 # alert command
 alert_command = "xmessage -center Message: "
 # relax command

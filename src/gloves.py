@@ -39,7 +39,7 @@ class Gloves:
             "squeezing_duration",
             "short_break_duration",
             "long_break_duration",
-            "order",
+            "sequence",
             "alert_command",            
             "relax_command"
         ]
@@ -52,12 +52,16 @@ class Gloves:
             raise ImportError(
                 "Some sections in the configuration file was missed out: {}".format(missed)
             )
+        try:
+            iter_test = iter(self.config.sequence)
+        except TypeError as te:
+            raise ImportError(te)
         else:
             log.info("Configuration file was loaded successfully!")
            
     def squeeze(self):
         log.info("Start squeezing!")
-        for action in self.config.order:
+        for action in self.config.sequence.split(' '):
             if action is 'g':
                 code = self._timer(
                     self.config.squeezing_duration,
@@ -69,6 +73,7 @@ class Gloves:
                     os.system(self.config.relax_command)
                 else:
                     # exceptions handling
+                    # in this case, what should i do?
                     pass                
             if action is 's':
                 code = self._timer(
@@ -76,12 +81,14 @@ class Gloves:
                     os.system,
                     self.config.alert_command + "Start working!"   
                 )
+                # nandling
             if action is 'l':
                 code = self._time(
                     self.config.long_break_duration,
                     os.system,
                     self.config.alert_command + "Start working!"
                 )
+                # same
             
     def _timer(self, delay, func, *args, **kwargs):
         start = time.time()        
@@ -157,4 +164,3 @@ if __name__ == "__main__":
     else:
         gloves.squeeze()
 
-#    gloves._timer(5, print, "end!") 
