@@ -97,7 +97,11 @@ class Gloves:
                 # same
             
     def _timer(self, delay, func, *args, **kwargs):
-        start = time.time()        
+        import signal
+        def stop(signum, frame):
+            raise KeyboardInterrupt()
+        signal.signal(signal.SIGTSTP, stop)
+        start = time.time()
         while(time.time() - start < delay):
             code = 0
             try:
