@@ -7,12 +7,36 @@ import argparse
 import logging as log
 
 class Gloves:
-    def __init__(self):
+    def __init__(self, no_log=False):
         try:
             self.load_config()
         except Exception as e:
             log.error(e.args[0])
             exit(1)
+
+        if no_log:
+            def to_track(atom):
+                pass
+        else:
+            abspath = os.path.expanduser(self.config.log_path)
+            if not os.path.exists(abspath):
+                try:
+                    os.makedirs(abspath)
+                except Exception as e:
+                    log.error(e.args[0])
+                    exit(1)
+            def to_track(atom):
+                with open(os.path.join(abspath, './gloves.hist'), 'a') as output:
+                    output.write('{}\t{}\t{}\t{}\n'.format(
+                        atom['type'],
+                        atom['start'],
+                        atom['stop'],
+                        atom['default_time']
+                    ))                    
+                    exit(0)
+                
+            
+        self.to_track = to_track
         
     def load_config(self, root="~", relpath=".config/gloves/config.py"):
         self.CONFIG_PATH = os.path.join(os.path.expanduser(root), relpath)
@@ -68,33 +92,37 @@ class Gloves:
     def squeeze(self):
         log.info("Start squeezing!")
         for action in self.config.sequence:
+            atom = {
+                'start': time.strftime("%d.%m.%Y %H:%M:%S"),
+                'type': action
+            }
             if action is 'g':
                 code = self._timer(
                     self.config.squeezing_duration,
                     os.system,
                     self.config.alert_command + "Stop working!"
                 )
-                if code is 0:
-                    # logging
-                    os.system(self.config.relax_command)
-                else:
-                    # exceptions handling
-                    # in this case, what should i do?
-                    pass                
+                atom['default_time'] = self.config.squeezing_duration
             if action is 's':
                 code = self._timer(
                     self.config.short_break_duration,
                     os.system,
                     self.config.alert_command + "Start working!"   
                 )
-                # nandling
+                atom['default_time'] = self.config.short_break_duration
             if action is 'l':
                 code = self._time(
                     self.config.long_break_duration,
                     os.system,
                     self.config.alert_command + "Start working!"
                 )
-                # same
+                atom['default_time'] = self.config.long_break_duration
+            atom['stop'] = time.strftime("%d.%m.%Y %H:%M:%S")
+            if code is 0:
+                self.to_track(atom)
+            else:
+                # handling
+                pass
             
     def _timer(self, delay, func, *args, **kwargs):
         import signal
@@ -166,7 +194,7 @@ if __name__ == "__main__":
     else:
         log.basicConfig(format="%(levelname)s: %(message)s")
 
-    gloves = Gloves()
+    gloves = Gloves(no_log=args.no_log)
 
     if args.loop:
         while True:
