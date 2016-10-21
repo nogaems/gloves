@@ -33,8 +33,6 @@ class Gloves:
                         atom['stop'],
                         atom['default_time']
                     ))                    
-                    exit(0)
-                
             
         self.to_track = to_track
         
@@ -121,8 +119,8 @@ class Gloves:
             if code is 0:
                 self.to_track(atom)
             else:
-                # handling
-                pass
+                log.info("Aborting.")
+                exit(0)
             
     def _timer(self, delay, func, *args, **kwargs):
         import signal
