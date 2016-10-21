@@ -1,7 +1,7 @@
 # time intervals in seconds
-squeezing_duration = 15
-short_break_duration = 5
-long_break_duration = 10
+squeezing_duration = 1500
+short_break_duration = 300
+long_break_duration = 1200
 # sequence of actions
 # g - gloves
 # s - short break
