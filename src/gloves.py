@@ -101,6 +101,7 @@ class Gloves:
                     self.config.alert_command + "Stop working!"
                 )
                 atom['default_time'] = self.config.squeezing_duration
+                os.system(self.config.relax_command)
             if action is 's':
                 code = self._timer(
                     self.config.short_break_duration,
